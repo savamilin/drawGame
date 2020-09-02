@@ -1,0 +1,284 @@
+const canvas = document.getElementById('game')
+const context = canvas.getContext('2d')
+console.log(context)
+
+const alfabet = ["a", 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+
+// pomeramo sa moveDrawMan niz man(niz sa referencama od fubkcija za crtanje) svaki put kad se promasi slovo
+var moveDrawMan = 0;
+
+var hitLetter = ''
+
+// pratimo pogodjene pokusaje
+var hit = 0
+
+// pratimo promasaje
+var miss = 0
+
+
+const guess = ['london', 'dog', 'java script', 'wood', 'bull', 'street', 'down town']
+
+//kordinate za svako slovo u nizu guess  
+const cordine = [
+    [310, 410, 510, 610, 710, 810],
+    [310, 410, 510],
+    // u slucaju 710 pozicija se nikad nece prikzati posto na tom indeksu je prazan string
+    [310, 410, 510, 610, 710, 810, 910, 1010, 1110, 1210, 1310],
+    [310, 410, 510, 610],
+    [310, 410, 510, 610],
+    [310, 410, 510, 610, 710, 810],
+    // u slucaju 710 pozicija se nikad nece prikzati posto na tom indeksu je prazan string
+    [310, 410, 510, 610, 710, 810, 910, 1010, 1110]
+]
+
+var random = Math.floor(Math.random() * guess.length)
+
+console.log(guess[random])
+
+
+
+// funkcija za trtanje linija na canvesu, parametar prima reci iz niza
+function drawLetterLine(guess) {
+    var moveTo = 300
+
+    var moveLine = 350
+    console.log(guess.length)
+
+    for (var i = 0; i < guess.length; i++) {
+        console.log('slovo iz niza', guess[i])
+
+        // ako u nizu ne postoji prazno slovo ispisi ga, ako postoji pomeri linije za 100
+        if (guess[i] != ' ') {
+
+            console.log('radi if')
+
+            console.log(moveTo, moveLine)
+
+            context.beginPath()
+            context.moveTo(moveTo, 700)
+
+            context.lineTo(moveLine, 700)
+            context.stroke()
+
+            moveTo += 100
+
+            moveLine += 100
+        } else {
+            console.log('radi else')
+            moveTo += 100
+            moveLine += 100
+
+            // kada prodje kroz niz slova, ako ima prazan string, odmah uracuna kao pogodje, zbog kraja igrice(jer je kraj igrice kada dodje do ukupnog broja u niza)
+            hit++
+        }
+
+
+
+
+    }
+
+
+
+}
+
+
+function drawStand() {
+
+    //postolje
+    context.beginPath()
+    context.moveTo(1000, 500)
+    context.lineTo(900, 500)
+    context.stroke()
+
+
+
+    context.beginPath()
+    context.moveTo(950, 500)
+    context.lineTo(950, 200)
+    context.stroke()
+
+
+    context.beginPath()
+    context.moveTo(950, 200)
+    context.lineTo(750, 200)
+    context.stroke()
+
+
+    context.beginPath()
+    context.moveTo(750, 200)
+    context.lineTo(750, 250)
+    context.stroke()
+}
+
+
+
+
+function drawHead() {
+    // glava
+    context.beginPath()
+    context.arc(750, 280, 30, 0, 2 * Math.PI, true)
+    context.stroke()
+
+    context.beginPath()
+    context.arc(740, 280, 5, 0, 2 * Math.PI, true)
+    context.stroke()
+
+    context.beginPath()
+    context.arc(760, 280, 5, 0, 2 * Math.PI, true)
+    context.stroke()
+
+    context.beginPath()
+    context.arc(750, 300, 5, 0, Math.PI, true)
+    context.stroke()
+}
+
+function drawBody() {
+
+    //telo
+    context.beginPath()
+    context.moveTo(750, 310)
+    context.lineTo(750, 400)
+    context.stroke()
+}
+
+function drawHeands() {
+    //ruke
+    context.beginPath()
+    context.moveTo(810, 340)
+    context.lineTo(690, 340)
+    context.stroke()
+
+}
+
+function leftFoot() {
+    // leva
+    context.beginPath()
+    context.moveTo(750, 400)
+    context.lineTo(720, 420)
+    context.stroke()
+
+}
+
+function rightFoot() {
+    // desna
+    context.beginPath()
+    context.moveTo(750, 400)
+    context.lineTo(780, 420)
+    context.stroke()
+
+}
+
+// niz sa referencama funkcije za zrtanje
+const man = [drawHead, drawBody, drawHeands, leftFoot, rightFoot]
+
+
+
+drawStand()
+
+drawLetterLine(guess[random])
+
+
+for (var i = 0; i < alfabet.length; i++) {
+
+    const divLeters = document.getElementById('letters')
+
+    const p = document.createElement('p')
+    p.style.fontSize = '30px'
+    p.setAttribute('id', alfabet[i])
+    p.innerHTML = alfabet[i]
+
+
+    p.onclick = drawLetter
+
+
+    divLeters.appendChild(p)
+
+}
+
+//kada korisnik klikne event crtaju se slova
+function drawLetter(e) {
+
+
+    for (var i = 0; i < guess[random].length; i++) {
+
+
+        // ako je tacno slovo ispisi ga
+        // ako je slovo unutar elementa jednako slovu unutar niza
+        if (e.target.id === guess[random][i]) {
+
+
+
+            console.log('index', i)
+
+            console.log('slova iz niza', guess[random][i])
+            console.log('slova koje je korisnik kliknuo', e.target.id)
+            context.font = "50px Arial"
+            console.log('kordinate', cordine[random][i])
+            context.strokeText(e.target.id, cordine[random][i], 690)
+
+
+            // zabelezi broj pogodjenih
+            console.log('pogodjeno', hit++)
+
+            // zbog ponavljanja slova, samo u slucaju da ima vise slova, nemoj da izbrises element koje si vez izbrisao
+            // hvatamo referencu, ako referenca nije pronadjena nemoj da je brises
+            // pokusavamo da nadjemo u DOM-u ako je izbrisana nemoj opet da je brises
+            if (document.getElementById(e.target.id) !== null) {
+                e.target.outerHTML = ''
+            }
+
+            // zapisujem slovo koje je pogodjeno
+            hitLetter = e.target.innerHTML
+        }
+
+    }
+
+
+    for (var i = 0; i < alfabet.length; i++) {
+
+        //  ako se slovo nalazi u alfabetu i nije jednako predhodnom pogodjenom slovu
+        if (alfabet[i] === e.target.id && e.target.id != hitLetter) {
+
+            miss++;
+            // izbrisi slovo(element)
+            e.target.outerHTML = ''
+                // 
+
+            console.log('slovo', e.target.id)
+            console.log('predhodno pogodjeno', hitLetter)
+
+            // ako boj promasenih nije jedank nizu man igra se nastavlja ako jeste gubis
+            if (miss != man.length) {
+                // dodeljujemo referencu i pozivamo funkciju za crtanje i pomeramo moveDrawMan za jedan(da sledeci promasaj bude novi crtez )
+
+                var drawMan = man[moveDrawMan]
+                drawMan()
+                moveDrawMan++
+                // 
+            } else {
+                setTimeout(function() {
+
+                    alert('you lost')
+                    window.location.reload()
+                }, 1000)
+            }
+
+
+        }
+    }
+
+    // ako je broj pogodjenih isti duzini broju solva u reci, zavrsio si partiju
+    if (hit === guess[random].length) {
+        console.log(guess[random].length)
+        console.log(hit)
+
+        // sacekamo sekundu da nam napise da smo dobili
+        setTimeout(function() {
+            alert('You won')
+            window.location.reload()
+        }, 1000)
+
+    }
+
+}
